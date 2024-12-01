@@ -31,10 +31,10 @@ public static class D1P1Tests
             .Should().Be(expected);
     }
 
-    [Fact(Skip = "ToDo")]
+    [Fact]
     internal static void RegressionTest()
     {
-        var expected = 42;
+        var expected = 1970720;
         Input.RawInput
             .Part1Answer()
             .Should().Be(expected);
