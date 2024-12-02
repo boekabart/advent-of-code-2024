@@ -9,4 +9,6 @@ fart "*.cs" __ $x
 dotnet build
 Set-Location "../answers"
 dotnet add reference "../day$X"
-Set-Location "../day__"
+Set-Location ".."
+dotnet sln add "day$X"
+Set-Location "day__"
