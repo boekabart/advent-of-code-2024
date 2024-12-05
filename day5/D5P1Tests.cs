@@ -5,34 +5,55 @@ namespace day5;
 
 public static class D5P1Tests
 {
-    [InlineData("",null)]
-    [Theory]
-    internal static void ParseInputLineTest(string line, Thing? expectedThing)
+    [Fact]
+    internal static void ParseInputLineTest()
     {
-        var actualThing = line.TryParseAsThing();
-        actualThing.Should().Be(expectedThing);
+        "12|13".TryParseAsRules().RequiredOrdering.Should().BeEquivalentTo([12,13]);
+        "12|11|10".TryParseAsRules().RequiredOrdering.Should().BeEquivalentTo([12, 11,10]);
+        "12,12".TryParseAsRules().Should().BeNull();
     }
 
     [Fact]
     internal static void ParseInputTest()
     {
-        var things = Input.ExampleInput.ParseThings().ToArray();
-        things.Should().HaveCount(0);
+        var things = Input.ExampleInput.ParseRules().ToArray();
+        things.Should().HaveCount(21);
     }
 
-    [Fact(Skip="ToDo")]
+    [Fact]
+    internal static void ParseInputOrderingLineTest()
+    {
+        "12,13".TryParseAsOrdering().PageNumbers.Should().BeEquivalentTo([12, 13]);
+        "12,11,10".TryParseAsOrdering().PageNumbers.Should().BeEquivalentTo([12, 11, 10]);
+        "12|12".TryParseAsOrdering().Should().BeNull();
+    }
+
+    [Fact]
+    internal static void MatchesTest()
+    {
+
+    }
+
+    [Fact]
+    internal static void ParseInputOrderingTest()
+    {
+        var things = Input.ExampleInput.ParseOrdering().ToArray();
+        things.Should().HaveCount(6);
+    }
+
+    [Fact]
     internal static void AcceptanceTest()
     {
-        var expected = 42;
+        var expected = 143;
         Input.ExampleInput
             .Part1Answer()
             .Should().Be(expected);
     }
 
-    [Fact(Skip = "ToDo")]
+    [Fact]
     internal static void RegressionTest()
     {
-        var expected = 42;
+        var expected = 5509;
         Input.RawInput
             .Part1Answer()
             .Should().Be(expected);
