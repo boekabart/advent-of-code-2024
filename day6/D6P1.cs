@@ -2,24 +2,68 @@
 
 namespace day6;
 
-internal record Thing(bool Data);
 
 public static class D6P1
 {
-    public static object Part1Answer(this string input) =>
-        new NotImplementedException();
+    public record Pos(int X, int Y);
+    public record Dir(int dX, int dY);
 
-    internal static IEnumerable<Thing> ParseThings(this string input) =>
+    private static List<Dir> dirs = [new Dir(0, -1), new Dir(1, 0), new Dir(0, 1), new Dir(-1, 0)];
+    public static Dir RotateRight(this Dir dir) => dirs[(dirs.IndexOf(dir) + 1) % dirs.Count];
+
+    public static Pos Step(this Pos pos, Dir dir) => new Pos(pos.X + dir.dX, pos.Y + dir.dY);
+
+    public class Map(char[][] Grid)
+    {
+        public char GetValue(Pos pos) => Grid[pos.Y][pos.X];
+        public bool IsFree(Pos pos) => !IsInGrid(pos) || GetValue(pos) != '#';
+        public bool IsInGrid(Pos pos) => pos is { X: >= 0, Y: >= 0 } && pos.X < Grid[0].Length && pos.Y<Grid.Length;
+
+        public (Pos, Dir) FindStart()
+        {
+            for (int y =0; y < Grid.Length; y++)
+            for (int x = 0; x < Grid[0].Length; x++)
+            {
+                if (Grid[y][x] == '^') return (new Pos(x, y), dirs[0]);
+                if (Grid[y][x] == '>') return (new Pos(x, y), dirs[1]);
+                if (Grid[y][x] == 'v') return (new Pos(x, y), dirs[2]);
+                if (Grid[y][x] == '<') return (new Pos(x, y), dirs[3]);
+            }
+
+            throw new InvalidOperationException();
+        }
+    }
+
+    public static object Part1Answer(this string input)
+    {
+        var map = input.ParseMap();
+        var (pos, dir) = map.FindStart();
+        HashSet<Pos> uniquePositions = [];
+        while (map.IsInGrid(pos))
+        {
+            uniquePositions.Add(pos);
+            var nextPos = pos.Step(dir);
+            if (map.IsFree(nextPos))
+            {
+                pos = nextPos;
+                continue;
+            }
+
+            dir = dir.RotateRight();
+        }
+
+        return uniquePositions.Count;
+    }
+
+    internal static Map ParseMap(this string input) => new Map(
         input
             .Lines()
             .Select(TryParseAsThing)
-            .OfType<Thing>();
+            .OfType<string>()
+            .Select(s => s.ToArray()).ToArray());
 
-    internal static Thing? TryParseAsThing(this string line)
+    internal static string? TryParseAsThing(this string line)
     {
-        return null;
+        return string.IsNullOrWhiteSpace(line)?null:line;
     }
-
-    internal static int GetResult(this IEnumerable<Thing> things) => things.Select(AsResult).Sum();
-    internal static int AsResult(this Thing thing) => 0;
 }
