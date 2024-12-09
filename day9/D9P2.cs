@@ -23,7 +23,8 @@ public static class D9P2
                     continue;
                 var firstIndexOfMovingFile = searchPos + 1;
                 var fileLength = 1 + (lastIndexOfMovingFile!.Value - firstIndexOfMovingFile);
-                var (targetBlock, freeSpaceIndex) = freeSpaces.TakeWhile(fs => fs.Pos < firstIndexOfMovingFile)
+                var (targetBlock, freeSpaceIndex) = freeSpaces
+                    .TakeWhile(fs => fs.Pos < firstIndexOfMovingFile)
                     .WithIndex()
                     .FirstOrDefault(space => space.item.Size >= fileLength);
 
@@ -63,8 +64,9 @@ public static class D9P2
         return diskmap;
     }
 
-    internal static void Dump(Diskmap dm)
+    internal static void Dump(this Diskmap dm)
     {
+        if (dm.Blocks.Count > 100) return;
         var c = dm.Blocks.Select(l => l is null ? (char)'.' : (char)(((char)l.Value) + 48)).ToList();
         Console.WriteLine(string.Join("", c));
     }

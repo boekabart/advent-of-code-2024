@@ -44,30 +44,38 @@ public static class D9P1
         return new Diskmap(diskmapList);
     }
 
-    internal static Diskmap Defrag(this Diskmap diskmap)
+    internal static Diskmap Defrag(this Diskmap diskMap)
     {
-        int fileBlockCount = diskmap.Blocks.OfType<long>().Count();
-        for (int q = 0; q<diskmap.Blocks.Count; q++)
+        var freeSpaces = diskMap.GetFreeSpaceDictionary();
+        freeSpaces.Reverse();
+        for (int searchPos = diskMap.Blocks.Count - 1; searchPos >= freeSpaces[^1].Pos; searchPos--)
         {
-            if (!DefragOnce(diskmap, fileBlockCount))
-                return diskmap;
+            var fileId = diskMap.Blocks[searchPos];
+            if (fileId is not null)
+            {
+                var firstIndexOfMovingFile = searchPos;
+                var fileLength = 1;
+
+                var targetBlock = freeSpaces[^1];
+
+                if (targetBlock.Size > 0)
+                {
+                    for (int q = 0; q < fileLength; q++)
+                    {
+                        diskMap.Blocks[targetBlock.Pos + q] = fileId.Value;
+                        diskMap.Blocks[firstIndexOfMovingFile + q] = null;
+                    }
+
+                    if (targetBlock.Size == fileLength)
+                        freeSpaces.RemoveAt(freeSpaces.Count-1);
+                    else
+                        freeSpaces[^1] = (targetBlock.Pos + fileLength, targetBlock.Size - fileLength);
+
+                    diskMap.Dump();
+                }
+            }
         }
-        return diskmap;
-    }
-
-    private static bool DefragOnce(Diskmap diskmap, int fileBlockCount)
-    {
-        var emptyIndex = diskmap.Blocks.IndexOf(null);
-        if (emptyIndex == -1 || emptyIndex == fileBlockCount)
-            return false;
-        var lastFullIndex = diskmap.Blocks.FindLastIndex(block => block is not null);
-        diskmap.Blocks.Swap(emptyIndex, lastFullIndex);
-        return true;
-    }
-
-    internal static void Swap<T>(this List<T> list, int index1, int index2)
-    {
-        (list[index1], list[index2]) = (list[index2], list[index1]);
+        return diskMap;
     }
 
     internal static long Checksum(this Diskmap dm) => dm.Blocks.Select((fileIdOrNull, index) => fileIdOrNull is null ? 0 : fileIdOrNull.Value * index).Sum();
