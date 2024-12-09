@@ -53,9 +53,12 @@ public static class D8P1
 
         return map.GetAntennas()
                 .GetAllBuiken()
-                .Where(buik => buik.X >= 0 && buik.X < sizeX && buik.Y >= 0 && buik.Y < sizeY)
+                .Where(pos => pos.InGrid(sizeX, sizeY))
             ;
     }
+
+    internal static bool InGrid(this Pos pos, int sizeX, int sizeY) =>
+        pos.X >= 0 && pos.X < sizeX && pos.Y >= 0 && pos.Y < sizeY;
 
     internal static IEnumerable<Pos> GetAllBuiken(this IEnumerable<(char Freq, Pos Pos)> antennas)
     {

@@ -41,7 +41,7 @@ public static class D8P1Tests
     }
 
     [Fact]
-    internal static void BuikenTest2a()
+    internal static void BuikenTest2()
     {
         const string q = @"
 ..........
@@ -57,25 +57,6 @@ public static class D8P1Tests
         var map = q.ParseMap();
         map.GetAntennas().Should().HaveCount(3);
         map.GetAntennas().Select(a => a.Pos).ToList().GetAllPairs().Should().HaveCount(3);
-        var actual = map.GetAllBuiken();
-        actual.Should().HaveCount(4);
-    }
-
-    [Fact]
-    internal static void BuikenTest2()
-    {
-        const string q = @"
-..........
-...#......
-#.........
-....a.....
-........a.
-.....a....
-..#.......
-......#...
-..........
-..........";
-        var map = q.ParseMap();
         var actual = map.GetAllBuiken();
         actual.Should().HaveCount(4);
     }
