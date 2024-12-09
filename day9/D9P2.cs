@@ -7,16 +7,16 @@ public static class D9P2
     public static object Part2Answer(this string input) =>
         input.ParseThings().DefragV2().Checksum();
 
-    internal static Diskmap DefragV2(this Diskmap diskmap)
+    internal static DiskMap DefragV2(this DiskMap diskMap)
     {
-        Dump(diskmap);
-        var freeSpaces = diskmap.GetFreeSpaceDictionary();
+        Dump(diskMap);
+        var freeSpaces = diskMap.GetFreeSpaceDictionary();
         long lastMovedFileId = long.MaxValue;
         int? lastIndexOfMovingFile = null;
         long? movingFileId = null;
-        for (int searchPos = diskmap.Blocks.Count - 1; searchPos >= 0; searchPos--)
+        for (int searchPos = diskMap.Blocks.Count - 1; searchPos >= 0; searchPos--)
         {
-            var fileId = diskmap.Blocks[searchPos];
+            var fileId = diskMap.Blocks[searchPos];
             if (movingFileId is not null)
             {
                 if (movingFileId == fileId)
@@ -32,8 +32,8 @@ public static class D9P2
                 {
                     for (int q = 0; q < fileLength; q++)
                     {
-                        diskmap.Blocks[targetBlock.Pos + q] = movingFileId.Value;
-                        diskmap.Blocks[firstIndexOfMovingFile + q] = null;
+                        diskMap.Blocks[targetBlock.Pos + q] = movingFileId.Value;
+                        diskMap.Blocks[firstIndexOfMovingFile + q] = null;
                     }
 
                     if (targetBlock.Size == fileLength)
@@ -44,7 +44,7 @@ public static class D9P2
                     {
                         freeSpaces[freeSpaceIndex] = (targetBlock.Pos + fileLength, targetBlock.Size - fileLength);
                     }
-                    //Dump(diskmap);
+                    //Dump(diskMap);
                 }
 
                 lastMovedFileId = movingFileId.Value;
@@ -61,27 +61,27 @@ public static class D9P2
                 lastIndexOfMovingFile = searchPos;
             }
         }
-        return diskmap;
+        return diskMap;
     }
 
-    internal static void Dump(this Diskmap dm)
+    internal static void Dump(this DiskMap dm)
     {
         if (dm.Blocks.Count > 100) return;
         var c = dm.Blocks.Select(l => l is null ? (char)'.' : (char)(((char)l.Value) + 48)).ToList();
         Console.WriteLine(string.Join("", c));
     }
 
-    internal static List<(int Pos, int Size)> GetFreeSpaceDictionary(this Diskmap diskmap)
+    internal static List<(int Pos, int Size)> GetFreeSpaceDictionary(this DiskMap diskMap)
     {
-        return diskmap.GetFreeSpaces().ToList();
+        return diskMap.GetFreeSpaces().ToList();
     }
 
-    internal static IEnumerable<(int Pos, int Size)> GetFreeSpaces(this Diskmap diskmap)
+    internal static IEnumerable<(int Pos, int Size)> GetFreeSpaces(this DiskMap diskMap)
     {
         int? startPos = null;
-        for (int q = 0; q < diskmap.Blocks.Count; ++q)
+        for (int q = 0; q < diskMap.Blocks.Count; ++q)
         {
-            bool isFree = diskmap.Blocks[q] is null;
+            bool isFree = diskMap.Blocks[q] is null;
             if (isFree)
             {
                 startPos ??= q;

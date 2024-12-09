@@ -9,21 +9,21 @@ public static class D9P1
     public static object Part1Answer(this string input) =>
         input.ParseThings().Defrag().Checksum();
 
-    internal static Diskmap ParseThings(this string input) =>
+    internal static DiskMap ParseThings(this string input) =>
         input
             .Lines()
             .Select(TryParseAsThing)
-            .OfType<Diskmap>()
+            .OfType<DiskMap>()
             .Single();
 
-    internal static Diskmap? TryParseAsThing(this string line)
+    internal static DiskMap? TryParseAsThing(this string line)
     {
         if (string.IsNullOrWhiteSpace(line))
             return null;
         return line.AsDiskmap();
     }
 
-    internal static Diskmap AsDiskmap(this string line)
+    internal static DiskMap AsDiskmap(this string line)
     {
         long? fileIndex = 0;
         List<long?> diskmapList = [];
@@ -41,10 +41,10 @@ public static class D9P1
             }
         }
 
-        return new Diskmap(diskmapList);
+        return new DiskMap(diskmapList);
     }
 
-    internal static Diskmap Defrag(this Diskmap diskMap)
+    internal static DiskMap Defrag(this DiskMap diskMap)
     {
         var freeSpaces = diskMap.GetFreeSpaceDictionary();
         freeSpaces.Reverse();
@@ -78,9 +78,9 @@ public static class D9P1
         return diskMap;
     }
 
-    internal static long Checksum(this Diskmap dm) => dm.Blocks.Select((fileIdOrNull, index) => fileIdOrNull is null ? 0 : fileIdOrNull.Value * index).Sum();
+    internal static long Checksum(this DiskMap dm) => dm.Blocks.Select((fileIdOrNull, index) => fileIdOrNull is null ? 0 : fileIdOrNull.Value * index).Sum();
 
     
 }
 
-internal record Diskmap(List<long?> Blocks);
+internal record DiskMap(List<long?> Blocks);
