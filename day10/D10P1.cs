@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using shared;
+﻿using shared;
 
 namespace day10;
 
-internal record Thing(bool Data);
 
 public static class D10P1
 {
@@ -12,9 +10,9 @@ public static class D10P1
 
     internal static IEnumerable<Pos> FindAll(this Map map, char q)
     {
-        for (int y =0; y<map.Grid.Length; y++)
+        for (int y = 0; y < map.Grid.Length; y++)
         for (int x = 0; x < map.Grid[y].Length; x++)
-            if (map.Grid[y][x]==q)
+            if (map.Grid[y][x] == q)
                 yield return new Pos(x, y);
     }
 
@@ -28,9 +26,14 @@ public static class D10P1
             todo.Enqueue(nine);
         }
 
+        HashSet<Pos> positionsChecked = [];
+
         while (todo.Count > 0)
         {
             var pos = todo.Dequeue();
+            if (!positionsChecked.Add(pos))
+                continue;
+
             var kar = map.Grid[pos.Y][pos.X];
             if (kar == '0')
                 continue;
@@ -42,16 +45,11 @@ public static class D10P1
                 var nbKar = map.TryGet(neighbour);
                 if (nbKar != lowerKar)
                     continue;
-                int added = 0;
-                foreach (var ninePos in ninePositionsToCopy)
-                    if (mapOfReachableNines.Get(neighbour).Add(ninePos))
-                        added++;
-                if (added > 0)
-                    todo.Enqueue(neighbour);
+                mapOfReachableNines.Get(neighbour).UnionWith(ninePositionsToCopy);
+                todo.Enqueue(neighbour);
             }
         }
 
         return map.FindAll('0').SelectMany(mapOfReachableNines.Get).Count();
     }
-
 }
