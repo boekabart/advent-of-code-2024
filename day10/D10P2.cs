@@ -32,12 +32,12 @@ public static class D10P2
 
             var lowerKar = (char)(kar - 1);
             var ninePositionsToCopy = mapOfReachableNines.Get(pos);
-            foreach (var neighbour in pos.FourAround())
+            var lowerNeighbours = pos.FourAround().Where(map.Contains).Where(nb => map.Get(nb) == lowerKar);
+            foreach (var neighbour in lowerNeighbours)
             {
-                var nbKar = map.TryGet(neighbour);
-                if (nbKar != lowerKar)
-                    continue;
-                mapOfReachableNines.Get(neighbour).AddRange(ninePositionsToCopy);
+                mapOfReachableNines
+                    .Get(neighbour)
+                    .AddRange(ninePositionsToCopy);
                 todo.Enqueue(neighbour);
             }
         }

@@ -8,14 +8,6 @@ public static class D10P1
     public static object Part1Answer(this string input) =>
         input.ParseMap().Go();
 
-    internal static IEnumerable<Pos> FindAll(this Map map, char q)
-    {
-        for (int y = 0; y < map.Grid.Length; y++)
-        for (int x = 0; x < map.Grid[y].Length; x++)
-            if (map.Grid[y][x] == q)
-                yield return new Pos(x, y);
-    }
-
     internal static int Go(this Map map)
     {
         var mapOfReachableNines = map.Convert(kar => new HashSet<Pos>());
@@ -40,12 +32,12 @@ public static class D10P1
 
             var lowerKar = (char)(kar - 1);
             var ninePositionsToCopy = mapOfReachableNines.Get(pos);
-            foreach (var neighbour in pos.FourAround())
+            var lowerNeighbours = pos.FourAround().Where(map.Contains).Where(nb => map.Get(nb)==lowerKar);
+            foreach (var neighbour in lowerNeighbours)
             {
-                var nbKar = map.TryGet(neighbour);
-                if (nbKar != lowerKar)
-                    continue;
-                mapOfReachableNines.Get(neighbour).UnionWith(ninePositionsToCopy);
+                mapOfReachableNines
+                    .Get(neighbour)
+                    .UnionWith(ninePositionsToCopy);
                 todo.Enqueue(neighbour);
             }
         }
