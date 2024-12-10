@@ -25,4 +25,22 @@ public static class ParsingExtensions
     public static int AsInt(this string txt) => int.Parse(txt);
 
     public static IEnumerable<int?> AsIntsOrNulls(this IEnumerable<string> lines) => lines.Select(AsIntOrNull);
+
+    public static Map ParseMap(this string input) =>
+        input
+            .NotEmptyTrimmedLines()
+            .AsMap();
+
+    public static string? NonWhitespace(this string line)
+    {
+        return string.IsNullOrWhiteSpace(line) ? null : line.Trim();
+    }
+
+    public static Map AsMap(this IEnumerable<string> lines)
+    {
+        var grid = lines.Select(line => line.ToArray()).ToArray();
+        return new Map(grid);
+    }
 }
+
+public record Map(char[][] Grid);

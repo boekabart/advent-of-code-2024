@@ -1,4 +1,6 @@
-﻿namespace day8;
+﻿using shared;
+
+namespace day8;
 
 public static class D8P2
 {

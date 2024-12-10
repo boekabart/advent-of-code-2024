@@ -2,8 +2,6 @@
 
 namespace day8;
 
-internal record Map(char[][] Grid);
-
 internal record Pos(int X, int Y);
 
 public static class D8P1
@@ -15,25 +13,7 @@ public static class D8P1
             .Count();
     }
 
-    internal static Map ParseMap(this string input) =>
-        input
-            .Lines()
-            .Select(TryParseAsThing)
-            .OfType<string>()
-            .AsMap();
-
-    internal static string? TryParseAsThing(this string line)
-    {
-        return string.IsNullOrWhiteSpace(line) ? null : line.Trim();
-    }
-
     //internal static int GetResult(this Map things) => things.Select(AsResult).Sum();
-
-    internal static Map AsMap(this IEnumerable<string> lines)
-    {
-        var grid = lines.Select(line => line.ToArray()).ToArray();
-        return new Map(grid);
-    }
 
     internal static IEnumerable<(char Freq, Pos Pos)> GetAntennas(this Map map)
     {
