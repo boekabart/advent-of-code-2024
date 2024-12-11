@@ -15,39 +15,42 @@ public static class D11P1
             .Select(ulong.Parse);
 
 
-    internal static int GetResult(this IEnumerable<ulong> things) => things
-        .Iterate(25)
-        .Count();
-    internal static IEnumerable<ulong> Iterate(this IEnumerable<ulong> thing, int n)
+    internal static ulong GetResult(this IEnumerable<ulong> things) => things
+        .Iterate(25);
+
+
+    internal static ulong Iterate(this IEnumerable<ulong> thing, int n)
+        => thing.Aggregate<ulong, ulong>(0, (current, t) => current + Iterate(t, n));
+
+    private static Dictionary<(ulong N, int Gens), ulong> dict = [];
+
+    internal static ulong Iterate(this ulong thing, int n)
     {
-        var iter = thing.ToList();
-        for (int q = 0; q < n; q++)
-            iter = iter.Iterate().ToList();
-        return iter;
+        if (n == 0) return 1;
+        if (dict.TryGetValue((thing, n), out var value)) return value;
+        var arr = Iterate(thing);
+        ulong answer = arr.Aggregate<ulong, ulong>(0, (current, t) => current + Iterate(t, n - 1));
+        dict[(thing, n)] = answer;
+        return answer;
     }
 
-    internal static IEnumerable<ulong> Iterate(this IEnumerable<ulong> thing) => thing.SelectMany(Iterate);
-
-    internal static IEnumerable<ulong> Iterate(this ulong thing)
+    internal static ulong[] Iterate(this ulong thing)
     {
         if (thing == 0)
         {
-            yield return 1;
-            yield break;
+            return [1];
         }
 
         var str = thing.ToString();
         if (str.Length % 2 == 0)
         {
-            yield return ulong.Parse(str.Substring(0, str.Length / 2).TrimStart('0'));
-            var rhs = str.Substring(str.Length / 2).TrimStart('0');
-            if (rhs.Length == 0)
-                yield return 0;
-            else
-                yield return ulong.Parse(rhs);
-            yield break;
+            var n1 = ulong.Parse(str.Substring(0, str.Length / 2));
+            var rhs = str.Substring(str.Length / 2);
+            var n2 = ulong.Parse(rhs);
+            return [n1, n2];
         }
 
-        yield return thing * 2024;
+        return [thing * 2024];
     }
+
 }

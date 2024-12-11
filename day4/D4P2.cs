@@ -13,12 +13,12 @@ public static class D4P2
         var skewedOneWay = list.Skewed().ToList().Transposed().ToList();
         var centerPositions1 = skewedOneWay.CenterPositions();
         centerPositions1 = centerPositions1.Transposed().Unskewed().ToList();
-        foreach (var cp in centerPositions1) Console.WriteLine(cp);
-        Console.WriteLine();
+        //foreach (var cp in centerPositions1) Console.WriteLine(cp);
+        //Console.WriteLine();
         var skewedOtherWay = things.Reverse().ToList().Skewed().ToList().Transposed().ToList();
         var centerPositions2 = skewedOtherWay.CenterPositions();
         centerPositions2 = centerPositions2.Transposed().Unskewed().Unreversed(list.Count - 1).ToList();
-        foreach (var cp in centerPositions2) Console.WriteLine(cp);
+        //foreach (var cp in centerPositions2) Console.WriteLine(cp);
 
         return centerPositions1.Intersect(centerPositions2).Distinct().Count();
     }

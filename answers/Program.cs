@@ -24,3 +24,9 @@ Console.WriteLine($"Day  8 Part 2: {day8.D8P2.Part2Answer(day8.Input.RawInput)}"
 
 Console.WriteLine($"Day  9 Part 1: {day9.D9P1.Part1Answer(day9.Input.RawInput)}");
 Console.WriteLine($"Day  9 Part 2: {day9.D9P2.Part2Answer(day9.Input.RawInput)}");
+
+Console.WriteLine($"Day 10 Part 1: {day10.D10P1.Part1Answer(day10.Input.RawInput)}");
+Console.WriteLine($"Day 10 Part 2: {day10.D10P2.Part2Answer(day10.Input.RawInput)}");
+
+Console.WriteLine($"Day 11 Part 1: {day11.D11P1.Part1Answer(day11.Input.RawInput)}");
+Console.WriteLine($"Day 11 Part 2: {day11.D11P2.Part2Answer(day11.Input.RawInput)}");
