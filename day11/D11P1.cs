@@ -20,28 +20,34 @@ public static class D11P1
 
 
     internal static ulong Iterate(this IEnumerable<ulong> thing, int n)
-        => thing.Aggregate<ulong, ulong>(0, (current, t) => current + Iterate(t, n));
+        => thing.Aggregate<ulong, ulong>(0, (current, t) => current + NumberOfStonesAfterGenerations(t, n));
 
-    private static Dictionary<(ulong N, int Gens), ulong> dict = [];
+    internal static Dictionary<(ulong N, int Gens), ulong> cache = [];
 
-    internal static ulong Iterate(this ulong thing, int n)
+    internal static ulong NumberOfStonesAfterGenerations(this ulong stone, int generations)
     {
-        if (n == 0) return 1;
-        if (dict.TryGetValue((thing, n), out var value)) return value;
-        var arr = Iterate(thing);
-        ulong answer = arr.Aggregate<ulong, ulong>(0, (current, t) => current + Iterate(t, n - 1));
-        dict[(thing, n)] = answer;
+        if (generations == 0)
+            return 1;
+        
+        if (cache.TryGetValue((stone, generations), out var cacheValue))
+            return cacheValue;
+
+        var arr = ApplyStoneRules(stone);
+
+        ulong answer = arr.Aggregate(0UL, (sum, newStone) => sum + NumberOfStonesAfterGenerations(newStone, generations - 1));
+
+        cache[(stone, generations)] = answer;
         return answer;
     }
 
-    internal static ulong[] Iterate(this ulong thing)
+    internal static ulong[] ApplyStoneRules(this ulong stone)
     {
-        if (thing == 0)
+        if (stone == 0)
         {
             return [1];
         }
 
-        var str = thing.ToString();
+        var str = stone.ToString();
         if (str.Length % 2 == 0)
         {
             var n1 = ulong.Parse(str.Substring(0, str.Length / 2));
@@ -50,7 +56,7 @@ public static class D11P1
             return [n1, n2];
         }
 
-        return [thing * 2024];
+        return [stone * 2024];
     }
 
 }
