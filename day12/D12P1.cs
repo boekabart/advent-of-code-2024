@@ -2,24 +2,56 @@
 
 namespace day12;
 
-internal record Thing(bool Data);
-
 public static class D12P1
 {
     public static object Part1Answer(this string input) =>
-        new NotImplementedException();
+        input.ParseMap().GetResult();
 
-    internal static IEnumerable<Thing> ParseThings(this string input) =>
-        input
-            .Lines()
-            .Select(TryParseAsThing)
-            .OfType<Thing>();
 
-    internal static Thing? TryParseAsThing(this string line)
+    internal static int GetResult(this Map map)
     {
-        return null;
+        var regions = map.GetRegions();
+        return regions.Sum(CalcFenceCost);
+
     }
 
-    internal static int GetResult(this IEnumerable<Thing> things) => things.Select(AsResult).Sum();
-    internal static int AsResult(this Thing thing) => 0;
+    internal static IEnumerable<Region> GetRegions(this Map map)
+    {
+        HashSet<Pos> alreadyRegionized = [];
+        foreach (var pos in map.AllPositions())
+        {
+            if (alreadyRegionized.Contains(pos))
+                continue;
+            var region = map.FindRegion(pos);
+            yield return region;
+            alreadyRegionized.UnionWith(region.Locations);
+        }
+    }
+
+    internal static Region FindRegion(this Map map, Pos pos)
+    {
+        var crop = map.Get(pos);
+        Stack<Pos> toCheck = [];
+        toCheck.Push(pos);
+        HashSet<Pos> positions = [];
+        while (toCheck.Count > 0)
+        {
+            var p = toCheck.Pop();
+            if (!positions.Add(p))
+                continue;
+            foreach (var neighbour in p.FourAround().Where(map.Contains).Where(nb => map.Get(nb) == crop))
+                toCheck.Push(neighbour);
+        }
+
+        return new Region(crop,positions);
+    }
+
+    internal static int CalcFenceCost(this Region region)
+    {
+        var area = region.Locations.Count;
+        var circum = region.Locations.Sum(loc => loc.FourAround().Count(op => !region.Locations.Contains(op)));
+        return area * circum;
+    }
 }
+
+internal record Region(char Crop, HashSet<Pos> Locations);

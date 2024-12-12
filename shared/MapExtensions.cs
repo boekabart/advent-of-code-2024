@@ -38,6 +38,13 @@ public static class MapExtensions
     public static bool Contains<T>(this Map<T> map, Pos pos) =>
         pos.X >= 0 && pos.X < map.Grid[0].Length && pos.Y >= 0 && pos.Y < map.Grid.Length;
 
+    public static IEnumerable<Pos> AllPositions<T>(this Map<T> map)
+    {
+        for (int y = 0; y < map.Grid.Length; y++)
+        for (int x = 0; x < map.Grid[y].Length; x++)
+            yield return new Pos(x, y);
+    }
+
     public static IEnumerable<Pos> FindAll<T>(this Map<T> map, T q)
     {
         for (int y = 0; y < map.Grid.Length; y++)
