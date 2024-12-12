@@ -45,7 +45,7 @@ public static class D12P1
 
         return new Region(crop,positions);
     }
-
+        
     internal static int CalcFenceCost(this Region region)
     {
         var area = region.Locations.Count;

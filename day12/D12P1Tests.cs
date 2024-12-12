@@ -15,20 +15,20 @@ BBCD
 BBCC
 EEEC".ParseMap();
         var region = map.FindRegion(new Pos(0, 0));
-        region.Count.Should().Be(4);
+        region.Locations.Should().HaveCount(4);
     }
 
     [Fact]
     internal static void FindRegionTest2()
     {
         var map = @"
-    OOOOO
+OOOOO
 OXOXO
 OOOOO
 OXOXO
 OOOOO".ParseMap();
         var region = map.FindRegion(new Pos(0, 0));
-        region.Count.Should().Be(21);
+        region.Locations.Should().HaveCount(21);
     }
 
     [Fact]
@@ -66,7 +66,7 @@ BBCC
 EEEC".ParseMap();
         var region = map.FindRegion(new Pos(0, 0));
 
-        new Region('A', region).CalcFenceCost().Should().Be(4 * 10);
+        region.CalcFenceCost().Should().Be(4 * 10);
     }
 
     [Fact]
@@ -79,7 +79,7 @@ OOOOO
 OXOXO
 OOOOO".ParseMap();
         var region = map.FindRegion(new Pos(0, 0));
-        new Region('A', region).CalcFenceCost().Should().Be(756);
+        region.CalcFenceCost().Should().Be(756);
     }
 
     [Fact]
