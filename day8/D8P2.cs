@@ -34,7 +34,7 @@ public static class D8P2
         var dX = pair.Pos2.X - pair.Pos1.X;
         var dY = pair.Pos2.Y - pair.Pos1.Y;
 
-        var ggd = GGD(Math.Abs(dX), Math.Abs(dY));
+        var ggd = dX.GGD(dY);
         dX /= ggd;
         dY /= ggd;
 
@@ -56,24 +56,4 @@ public static class D8P2
         yield return new(pair.Pos2.X + dX, pair.Pos2.Y + dY);
         yield return new(pair.Pos1.X - dX, pair.Pos1.Y - dY);
     }
-
-    public static int GGD(int a, int b)
-    {
-        // Aannames: 
-        // * a en b zijn ≥ 0 
-        // * Als een van beide 0 is, geef het andere getal terug
-        // * Beide 0 komt niet voor
-        if (a == 0) return b;
-        if (b == 0) return a;
-
-        // Euclidisch algoritme
-        while (b != 0)
-        {
-            int temp = a % b;
-            a = b;
-            b = temp;
-        }
-        return a;
-    }
-
 }
