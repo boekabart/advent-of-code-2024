@@ -25,5 +25,36 @@ public static class D13P1
     }
 
     internal static int GetResult(this IEnumerable<Thing> things) => things.Select(AsResult).Sum();
-    internal static int AsResult(this Thing thing) => 0;
+    internal static int AsResult(this Thing thing)
+    {
+        var (a, b, p) = thing;
+        if (100 * (a.X + b.X) < p.X)
+        {
+            return 0;
+        }
+
+        if (100 * (a.Y + b.Y) < p.Y)
+        {
+            return 0;
+        }
+
+        int maxA = Math.Min(p.X / a.X, p.Y / a.Y);
+        for (var na = 0; na <= maxA; na++)
+        {
+            var Xa = na * a.X;
+            var Ya = na * a.Y;
+            var Xra = p.X - Xa;
+            var Yra = p.Y - Ya;
+            if (Xra % b.X != 0)
+                continue;
+            if (Yra % b.Y != 0)
+                continue;
+            var nbx = Xra / b.X;
+            var nby = Yra / b.Y;
+            if (nbx == nby)
+                return 3 * na + nbx;
+        }
+
+        return 0;
+    }
 }
