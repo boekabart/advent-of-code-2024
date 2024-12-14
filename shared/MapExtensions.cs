@@ -52,6 +52,11 @@ public static class MapExtensions
             if (q.Equals(map.Grid[y][x]))
                 yield return new Pos(x, y);
     }
+
+    public static Pos Add(this Pos pos, Pos delta) => new(pos.X + delta.X, pos.Y + delta.Y);
+    public static Pos Times(this Pos pos, int mult) => new(pos.X * mult, pos.Y * mult);
+    public static Pos Mod(this Pos pos, Pos mod) => new(pos.X % mod.X, pos.Y %mod.Y);
+    public static Pos AbsMod(this Pos pos, Pos mod) => new(((pos.X % mod.X) + mod.X) % mod.X, ((pos.Y % mod.Y)+mod.Y )% mod.Y);
 }
 
 public record Map<T>(T[][] Grid);
