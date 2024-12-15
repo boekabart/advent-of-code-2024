@@ -32,6 +32,7 @@ public static class MapExtensions
     public static T Get<T>(this Map<T> map, Pos pos) => map.Grid[pos.Y][pos.X];
     public static T? TryGet<T>(this Map<T> map, Pos pos) where T : class => map.Contains(pos) ? map.Get(pos) : null;
 
+    public static T Set<T>(this Map<T> map, Pos pos, T newValue) => map.Grid[pos.Y][pos.X] = newValue;
     public static T? GetOr<T>(this Map<T> map, Pos pos, T? def) where T : struct =>
         map.Contains(pos) ? map.Get(pos) : def;
 
