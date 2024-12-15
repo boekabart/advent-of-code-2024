@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using shared;
 using Xunit;
 
 namespace day15;

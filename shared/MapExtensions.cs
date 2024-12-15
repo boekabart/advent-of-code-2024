@@ -28,6 +28,8 @@ public static class MapExtensions
 
     public static Map<T2> Convert<T1, T2>(this Map<T1> map, Func<T1, T2> mapper) =>
         new(map.Grid.Select(line => line.Select(mapper).ToArray()).ToArray());
+    public static Map<T2> StretchConvert<T1, T2>(this Map<T1> map, Func<T1, T2[]> mapper) =>
+        new(map.Grid.Select(line => line.SelectMany(mapper).ToArray()).ToArray());
 
     public static T Get<T>(this Map<T> map, Pos pos) => map.Grid[pos.Y][pos.X];
     public static T? TryGet<T>(this Map<T> map, Pos pos) where T : class => map.Contains(pos) ? map.Get(pos) : null;
