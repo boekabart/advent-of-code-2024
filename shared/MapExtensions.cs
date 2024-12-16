@@ -28,6 +28,7 @@ public static class MapExtensions
 
     public static Map<T2> Convert<T1, T2>(this Map<T1> map, Func<T1, T2> mapper) =>
         new(map.Grid.Select(line => line.Select(mapper).ToArray()).ToArray());
+
     public static Map<T2> StretchConvert<T1, T2>(this Map<T1> map, Func<T1, T2[]> mapper) =>
         new(map.Grid.Select(line => line.SelectMany(mapper).ToArray()).ToArray());
 
@@ -35,6 +36,7 @@ public static class MapExtensions
     public static T? TryGet<T>(this Map<T> map, Pos pos) where T : class => map.Contains(pos) ? map.Get(pos) : null;
 
     public static T Set<T>(this Map<T> map, Pos pos, T newValue) => map.Grid[pos.Y][pos.X] = newValue;
+
     public static T? GetOr<T>(this Map<T> map, Pos pos, T? def) where T : struct =>
         map.Contains(pos) ? map.Get(pos) : def;
 
@@ -55,7 +57,19 @@ public static class MapExtensions
             if (q.Equals(map.Grid[y][x]))
                 yield return new Pos(x, y);
     }
+}
 
+public static class Dir
+{
+    public static readonly Pos Up = new Pos(0, -1);
+    public static readonly Pos Down = new Pos(0, 1);
+    public static readonly Pos Left = new Pos(-1, 0);
+    public static readonly Pos Right = new Pos(1, 0);
+
+
+    private static List<Pos> dirs = [Up, Right, Down, Left];
+    public static Pos RotateRight(this Pos dir) => dirs[(dirs.IndexOf(dir) + 1) % dirs.Count];
+    public static Pos RotateLeft(this Pos dir) => dirs[(dirs.Count + (dirs.IndexOf(dir) - 1) % dirs.Count) % dirs.Count];
     public static Pos Add(this Pos pos, Pos delta) => new(pos.X + delta.X, pos.Y + delta.Y);
     public static Pos Times(this Pos pos, int mult) => new(pos.X * mult, pos.Y * mult);
     public static Pos Mod(this Pos pos, Pos mod) => new(pos.X % mod.X, pos.Y %mod.Y);
