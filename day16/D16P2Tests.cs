@@ -5,19 +5,28 @@ namespace day16;
 
 public class D16P2Tests
 {
-    [Fact(Skip = "ToDo")]
+    [Fact]
     internal static void AcceptanceTest()
     {
-        var expected = 42;
+        var expected = 45;
         Input.ExampleInput
             .Part2Answer()
             .Should().Be(expected);
     }
 
-    [Fact(Skip = "ToDo")]
+    [Fact]
+    internal static void AcceptanceTest2()
+    {
+        var expected = 64;
+        Input.ExampleInput2
+            .Part2Answer()
+            .Should().Be(expected);
+    }
+
+    [Fact]
     internal static void RegressionTest()
     {
-        var expected = 42;
+        var expected = 679;
         Input.RawInput
             .Part2Answer()
             .Should().Be(expected);

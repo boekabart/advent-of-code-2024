@@ -57,6 +57,12 @@ public static class MapExtensions
             if (q.Equals(map.Grid[y][x]))
                 yield return new Pos(x, y);
     }
+
+    public static string Dump(this Map map)
+    {
+        return string.Join(Environment.NewLine, map.Grid.Select(l => string.Join("", l)));
+    }
+
 }
 
 public static class Dir
