@@ -25,7 +25,7 @@ public static class D15P2
 
             pos = newPos;
         }
-        Console.WriteLine(map.DumpMap());
+        //Console.WriteLine(map.DumpMap());
         return map.Checksum2();
 
     }

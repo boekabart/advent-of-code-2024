@@ -48,3 +48,6 @@ Console.WriteLine($"Day 16 Part 2: {day16.D16P2.Part2Answer(day16.Input.RawInput
 
 Console.WriteLine($"Day 17 Part 1: {day17.D17P1.Part1Answer(day17.Input.RawInput)}");
 Console.WriteLine($"Day 17 Part 2: {day17.D17P2.Part2Answer(day17.Input.RawInput)}");
+
+Console.WriteLine($"Day 18 Part 1: {day18.D18P1.Part1Answer(day18.Input.RawInput)}");
+Console.WriteLine($"Day 18 Part 2: {day18.D18P2.Part2Answer(day18.Input.RawInput)}");
