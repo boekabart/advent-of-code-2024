@@ -82,7 +82,12 @@ public static class Dir
     public static Pos AbsMod(this Pos pos, Pos mod) => new(((pos.X % mod.X) + mod.X) % mod.X, ((pos.Y % mod.Y)+mod.Y )% mod.Y);
 }
 
-public record Map<T>(T[][] Grid);
+public record Map<T>(T[][] Grid)
+{
+    public Map(int sizeX, int sizeY) : this(Enumerable.Range(0, sizeY).Select(_ => new T[sizeX]).ToArray())
+    {
+    }
+}
 
 public record Map(char[][] Grid) : Map<char>(Grid);
 
