@@ -32,6 +32,14 @@ public static class D19P1Tests
         new Pattern("ubwu").CanBeMade(towels).Should().BeFalse();
         new Pattern("bwurrg").CanBeMade(towels).Should().BeTrue();
     }
+    [Fact]
+    internal static void CanBeMadeTest2()
+    {
+        var towels = Input.RawInput.ParseTowels().ToList();
+        towels.Should().HaveCount(447);
+        var patterns = Input.RawInput.ParsePatterns().ToList();
+        patterns[0].CanBeMade(towels).Should().BeTrue();
+    }
 
     [Fact]
     internal static void AcceptanceTest()
@@ -42,10 +50,10 @@ public static class D19P1Tests
             .Should().Be(expected);
     }
 
-    [Fact(Skip = "ToDo")]
+    [Fact]
     internal static void RegressionTest()
     {
-        var expected = 42;
+        var expected = 300;
         Input.RawInput
             .Part1Answer()
             .Should().Be(expected);
