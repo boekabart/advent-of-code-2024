@@ -15,6 +15,22 @@ public static class MapExtensions
         yield return pos.Down();
     }
 
+    public static IEnumerable<Pos> WithManhattanDistance(this Pos pos, int minDist, int maxDist = 0)
+    {
+        if (maxDist == 0) maxDist = minDist;
+        for (int dy = -maxDist; dy <= maxDist; dy++)
+        {
+            var absY = Math.Abs(dy);
+            for (int dx = -maxDist; dx <= maxDist; dx++)
+            {
+                var dist = Math.Abs(dx) + absY;
+                if (dist >maxDist || dist < minDist)
+                    continue;
+                yield return new Pos(pos.X + dx, pos.Y + dy);
+            }
+        }
+    }
+
     public static Map ParseMap(this string input) =>
         input
             .NotEmptyTrimmedLines()

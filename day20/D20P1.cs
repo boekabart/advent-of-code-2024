@@ -12,7 +12,7 @@ public static class D20P1
         var start = map.FindAll('S').Single();
         var end = map.FindAll('E').Single();
         var blocks = map.Convert(ch => ch == '#' ? 1 : 0);
-        var shortest = blocks.FindShortestPathLength(start, end, out var fromStart, out var fromEnd);
+        _ = blocks.FillDistanceFromStartMap(start, end, out var fromStart);
         var allBlocks = blocks.FindAll(1);
         var n = 0;
         foreach (var blockPos in allBlocks)
@@ -21,12 +21,12 @@ public static class D20P1
                 .ToList();
             if (!availableStartDistances.Any())
                 continue;
-            var availableEndDistances = blockPos.FourAround().Where(fromEnd.Contains).Select(fromEnd.Get).OfType<int>()
+            var availableEndDistances = blockPos.FourAround().Where(fromStart.Contains).Select(fromStart.Get).OfType<int>()
                 .ToList();
-            if (!availableEndDistances.Any())
-                continue;
-            var dist = availableStartDistances.Min() + availableEndDistances.Min() + 2;
-            var saved = shortest - dist;
+            var lowestStart = availableStartDistances.Min();
+            var cheatEnd = lowestStart + 2;
+            var highestEnd =  + availableEndDistances.Max();
+            var saved = highestEnd - cheatEnd;
             if (saved >= minCheatValue)
                 n++;
         }
@@ -34,18 +34,14 @@ public static class D20P1
         return n;
     }
 
-    internal static int FindShortestPathLength(this Map<int> mapWithBlocks, Pos start, Pos end, out Map<int?> fromStart, out Map<int?> fromEnd)
+    internal static int FillDistanceFromStartMap(this Map<int> mapWithBlocks, Pos start, Pos end, out Map<int?> fromStart)
     {
         fromStart = mapWithBlocks.Convert(_ => (int?)null);
         fromStart.Set(start, 0);
-        fromEnd = mapWithBlocks.Convert(_ => (int?)null);
-        fromEnd.Set(end, 0);
         Queue<Pos> startQueue = [];
         startQueue.Enqueue(start);
-        Queue<Pos> endQueue = [];
-        endQueue.Enqueue(end);
         var lowest = int.MaxValue;
-        while (startQueue.Any() || endQueue.Any())
+        while (startQueue.Any())
         {
             if (startQueue.TryDequeue(out var s))
             {
@@ -57,26 +53,10 @@ public static class D20P1
                         continue;
                     if ((fromStart.Get(s2) ?? int.MaxValue) <= nextDist)
                         continue;
-                    if (fromEnd.Get(s2).HasValue)
-                        lowest= Math.Min(lowest, nextDist + fromEnd.Get(s2)!.Value);
+                    if (s2 == end)
+                        lowest = Math.Min(lowest, nextDist);
                     fromStart.Set(s2, nextDist);
                     startQueue.Enqueue(s2);
-                }
-            }
-            if (endQueue.TryDequeue(out var e))
-            {
-                var dist = fromEnd.Get(e)!.Value;
-                var nextDist = dist + 1;
-                foreach (var e2 in e.FourAround().Where(mapWithBlocks.Contains))
-                {
-                    if (mapWithBlocks.Get(e2) > 0)
-                        continue;
-                    if ((fromEnd.Get(e2) ?? int.MaxValue) <= nextDist)
-                        continue;
-                    if (fromStart.Get(e2).HasValue)
-                        lowest = Math.Min(lowest, nextDist + fromStart.Get(e2)!.Value);
-                    fromEnd.Set(e2, nextDist);
-                    endQueue.Enqueue(e2);
                 }
             }
         }
