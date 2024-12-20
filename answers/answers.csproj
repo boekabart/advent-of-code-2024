@@ -29,6 +29,7 @@
     <ProjectReference Include="..\day19\day19.csproj" />
     <ProjectReference Include="..\day20\day20.csproj" />
     <ProjectReference Include="..\day21\day21.csproj" />
+    <ProjectReference Include="..\day22\day22.csproj" />
   </ItemGroup>
 
 </Project>
