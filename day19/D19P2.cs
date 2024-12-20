@@ -1,90 +1,57 @@
-﻿namespace day19;
+﻿using shared;
+
+namespace day19;
 
 public static class D19P2
 {
-    public static object Part2Answer(this string input)
+    public static long Part2Answer(this string input)
     {
         var towels = input.ParseTowels().ToList();
         return input.ParsePatterns()
-            .OrderBy(p => p.Stripes.Length)
-            .CanBeMade2(towels).Sum(boel => boel);
+            .Select(p => p.CountOptions(towels))
+            .Sum(lang => lang);
     }
 
-    internal static IEnumerable<int> CanBeMade2(this IEnumerable<Pattern> patterns, IEnumerable<Towel> towels)
+    internal static long CountOptions(this Pattern pattern, List<Towel> towels)
     {
-        Dictionary<string, int> yes = towels.ToDictionary();
-        HashSet<string> no = [];
-        return patterns.CanBeMade(yes, no);
-    }
+        var startIndices = pattern.FindGuaranteedStarts(towels, out var words).Order().ToList();
+        if (!startIndices.Any())
+            return 0;
 
-    internal static Dictionary<string, int> ToDictionary(this IEnumerable<Towel> towels)
-    {
-        var retval = towels.ToDictionary(t => t.Stripes, t => 1);
-        HashSet<string> no = [];
-        foreach (var t in towels.OrderBy(t => t.Stripes.Length))
+        var wordStarts = words.GroupBy(se => se.Start).ToDictionary(gr => gr.Key, gr => gr.Select(se => se.End).ToList());
+        long n = 1;
+        foreach (var (start, index) in startIndices.WithIndex())
         {
-            var p = new Pattern(t.Stripes);
-            var one = retval[t.Stripes];
-            retval.Remove(t.Stripes);
-            var n = p.CanBeMade(retval, no);
-            retval[t.Stripes] = n + one;
-            Console.WriteLine($"{t.Stripes} : {n} + self = {n+one}");
+            var end = index + 1 < startIndices.Count ? startIndices[index + 1] : pattern.Stripes.Length;
+            var length = end - start;
+            var substring = pattern.Stripes.Substring(start, length);
+            var possibilities = wordStarts.CountPathsFromTo(start, end, []);
+            n *= possibilities;
         }
-
-        return retval;
+        return n;
     }
 
-    internal static int CanBeMade2(this Pattern pattern, IEnumerable<Towel> towels)
+    internal static long CountPathsFromTo(this Dictionary<int, List<int>> words, int start, int end, Dictionary<(int Start, int End), long> cache)
     {
-        Dictionary<string, int> yes = towels.ToDictionary();
-        HashSet<string> no = [];
-        return pattern.CanBeMade(yes, no);
+        if (start == end)
+            return 1;
+        var key = (start, end);
+        if (cache.TryGetValue(key, out var result)) return result;
+        result = words[start].Sum(endsFromHere => words.CountPathsFromTo(endsFromHere, end, cache));
+        cache[key]= result;
+        return result;
     }
 
-    internal static IEnumerable<int> CanBeMade(this IEnumerable<Pattern> pattern, Dictionary<string,int> yes,
-        HashSet<string> no)
+    internal static IEnumerable<int> AllIndicesOf(this string longString, string shortString)
     {
-        return pattern.Select(p => p.CanBeMade(yes, no));
-    }
-
-    internal static int CanBeMade(this Pattern pattern, Dictionary<string,int> yes, HashSet<string> no)
-    {
-        if (yes.TryGetValue(pattern.Stripes, out var k)) return k;
-        if (no.Contains(pattern.Stripes)) return 0;
-        int n = 0;
-        HashSet<string> alreadyChecked = [];
-        var toCheck = yes.Keys.OrderByDescending(kk => kk.Length).ToList();
-        var okL = 0;
+        int start = 0;
         while (true)
         {
-            if (toCheck.Count == 0) break;
+            var index = longString.IndexOf(shortString, start, StringComparison.Ordinal);
+            if (index < 0) yield break;
 
-            foreach (var t in toCheck.Where(t => t.Length>okL))
-            {
-                if (pattern.Stripes.StartsWith(t))
-                {
-                    var subPattern = new Pattern(pattern.Stripes.Substring(t.Length));
-                    var ya = subPattern.CanBeMade(yes, no) * yes[t];
-                    n += ya;
-                    if (ya > 0)
-                    {
-                        okL = t.Length;
-                    }
-                }
-
-                alreadyChecked.Add(t);
-            }
-
-            toCheck = yes.Keys.Where(t => t.Length > okL).Except(alreadyChecked).ToList();
+            yield return index;
+            start = index + 1;
         }
-
-        if (n > 0)
-        {
-            yes.Add(pattern.Stripes, n);
-            return n;
-        }
-
-        no.Add(pattern.Stripes);
-        return 0;
     }
 }
