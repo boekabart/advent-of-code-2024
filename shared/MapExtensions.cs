@@ -77,6 +77,16 @@ public static class Dir
     public static Pos RotateRight(this Pos dir) => dirs[(dirs.IndexOf(dir) + 1) % dirs.Count];
     public static Pos RotateLeft(this Pos dir) => dirs[(dirs.Count + (dirs.IndexOf(dir) - 1) % dirs.Count) % dirs.Count];
     public static Pos Add(this Pos pos, Pos delta) => new(pos.X + delta.X, pos.Y + delta.Y);
+    public static Pos Subtract(this Pos pos, Pos delta) => new(pos.X - delta.X, pos.Y - delta.Y);
+    public static Pos Sign(this Pos pos) => new(Math.Sign(pos.X), Math.Sign(pos.Y));
+    public static int ManhattanLen(this Pos pos) => Math.Abs(pos.X) + Math.Abs(pos.Y);
+    public static int ManhattanDist(this Pos pos, Pos other) => Math.Abs(pos.X-other.X) + Math.Abs(pos.Y-other.Y);
+
+    public static IEnumerable<Pos> Decompose(this Pos pos)
+    {
+        if (pos.X != 0) yield return pos with { Y = 0 };
+        if (pos.Y != 0) yield return pos with { X = 0 };
+    }
     public static Pos Times(this Pos pos, int mult) => new(pos.X * mult, pos.Y * mult);
     public static Pos Mod(this Pos pos, Pos mod) => new(pos.X % mod.X, pos.Y %mod.Y);
     public static Pos AbsMod(this Pos pos, Pos mod) => new(((pos.X % mod.X) + mod.X) % mod.X, ((pos.Y % mod.Y)+mod.Y )% mod.Y);
