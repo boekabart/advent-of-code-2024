@@ -19,12 +19,16 @@ public static class D19P2
 
     internal static Dictionary<string, int> ToDictionary(this IEnumerable<Towel> towels)
     {
-        var retval = new Dictionary<string, int>();
-        foreach (var t in towels)
+        var retval = towels.ToDictionary(t => t.Stripes, t => 1);
+        HashSet<string> no = [];
+        foreach (var t in towels.OrderBy(t => t.Stripes.Length))
         {
             var p = new Pattern(t.Stripes);
-            var n = p.CanBeMade2(towels.Where(tw => tw != t));
-            retval[t.Stripes] = n + 1;
+            var one = retval[t.Stripes];
+            retval.Remove(t.Stripes);
+            var n = p.CanBeMade(retval, no);
+            retval[t.Stripes] = n + one;
+            Console.WriteLine($"{t.Stripes} : {n} + self = {n+one}");
         }
 
         return retval;
@@ -49,23 +53,29 @@ public static class D19P2
         if (no.Contains(pattern.Stripes)) return 0;
         int n = 0;
         HashSet<string> alreadyChecked = [];
-        var toCheck = yes.Keys.OrderBy(kk => kk.Length).ToList();
+        var toCheck = yes.Keys.OrderByDescending(kk => kk.Length).ToList();
+        var okL = 0;
         while (true)
         {
             if (toCheck.Count == 0) break;
 
-            foreach (var t in toCheck)
+            foreach (var t in toCheck.Where(t => t.Length>okL))
             {
                 if (pattern.Stripes.StartsWith(t))
                 {
                     var subPattern = new Pattern(pattern.Stripes.Substring(t.Length));
-                    n += subPattern.CanBeMade(yes, no) * yes[t];
+                    var ya = subPattern.CanBeMade(yes, no) * yes[t];
+                    n += ya;
+                    if (ya > 0)
+                    {
+                        okL = t.Length;
+                    }
                 }
 
                 alreadyChecked.Add(t);
             }
 
-            toCheck = yes.Keys.Except(alreadyChecked).ToList();
+            toCheck = yes.Keys.Where(t => t.Length > okL).Except(alreadyChecked).ToList();
         }
 
         if (n > 0)

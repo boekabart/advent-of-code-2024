@@ -20,6 +20,8 @@ public class D19P2Tests
         new Pattern("br").CanBeMade2(towels).Should().Be(2);
         new Pattern("gb").CanBeMade2(towels).Should().Be(2);
         */
+        new Pattern("brbr").CanBeMade2(towels).Should().Be(4);
+
         new Pattern("brwrr").CanBeMade2(towels).Should().Be(2);
         new Pattern("bggr").CanBeMade2(towels).Should().Be(1);
         new Pattern("gbbr").CanBeMade2(towels).Should().Be(4);
