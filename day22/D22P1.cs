@@ -2,24 +2,27 @@
 
 namespace day22;
 
-internal record Thing(bool Data);
-
 public static class D22P1
 {
-    public static object Part1Answer(this string input) =>
-        new NotImplementedException();
-
-    internal static IEnumerable<Thing> ParseThings(this string input) =>
-        input
-            .Lines()
-            .Select(TryParseAsThing)
-            .OfType<Thing>();
-
-    internal static Thing? TryParseAsThing(this string line)
+    public static object Part1Answer(this string input)
     {
-        return null;
+        var secrets =
+            input.NotEmptyTrimmedLines()
+                .Select(long.Parse)
+                .ToList();
+        return secrets.Select(s => s.Next(2000)).Sum();
     }
 
-    internal static int GetResult(this IEnumerable<Thing> things) => things.Select(AsResult).Sum();
-    internal static int AsResult(this Thing thing) => 0;
-}
+    internal static long Next(this long s, int n)
+    {
+        return Enumerable.Range(0, n).Aggregate(s, (a, _) => a.Next());
+    }
+
+    internal static long Next(this long s)
+    {
+        long s1 = (s ^ (s * 64)) % 16777216;
+        long s2 = (s1 ^ (s1 / 32)) % 16777216;
+        long s3 = (s2 ^ (s2 * 2048)) % 16777216;
+        return s3;
+    }
+};

@@ -5,34 +5,27 @@ namespace day22;
 
 public static class D22P1Tests
 {
-    [InlineData("",null)]
-    [Theory]
-    internal static void ParseInputLineTest(string line, Thing? expectedThing)
-    {
-        var actualThing = line.TryParseAsThing();
-        actualThing.Should().Be(expectedThing);
-    }
-
     [Fact]
     internal static void ParseInputTest()
     {
-        var things = Input.ExampleInput.ParseThings().ToArray();
-        things.Should().HaveCount(0);
+        123L.Next().Should().Be(15887950);
+        123L.Next().Next().Should().Be(16495136);
+        123L.Next(2).Should().Be(16495136);
     }
 
-    [Fact(Skip="ToDo")]
+    [Fact]
     internal static void AcceptanceTest()
     {
-        var expected = 42;
+        var expected = 37327623;
         Input.ExampleInput
             .Part1Answer()
             .Should().Be(expected);
     }
 
-    [Fact(Skip = "ToDo")]
+    [Fact]
     internal static void RegressionTest()
     {
-        var expected = 42;
+        var expected = 12759339434L;
         Input.RawInput
             .Part1Answer()
             .Should().Be(expected);
