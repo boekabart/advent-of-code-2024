@@ -11,16 +11,22 @@ public static class D24P1
     public static object Part1Answer(this string input)
     {
         var machine = input.ParseThings();
+        var allZ = machine.GetCombinedValue("z");
+
+        return allZ;
+    }
+
+    private static long GetCombinedValue(this Machine machine, string letter)
+    {
         long allZ = 0;
         int bitNo = 0;
-        long bitValue = 1;
         while (true)
         {
-            var name = $"z{bitNo:00}";
+            var name = $"{letter}{bitNo:00}";
             if (!machine.Operations.ContainsKey(name))
                 break;
             var bit = machine.GetValue(name);
-            allZ += bit << bitNo;
+            allZ |= bit << bitNo;
             bitNo ++;
         }
 
