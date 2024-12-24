@@ -16,23 +16,28 @@ public static class D24P1Tests
     [Fact]
     internal static void ParseInputTest()
     {
-        var things = Input.ExampleInput.ParseThings().ToArray();
-        things.Should().HaveCount(0);
+        var mach = Input.ExampleInput.ParseThings();
+        mach.Operations.Should().HaveCount(46);
+
+        mach.GetValue("x00").Should().Be(1);
+        mach.GetValue("x04").Should().Be(0);
+        mach.GetValue("djm").Should().Be(1);
+        mach.GetValue("z03").Should().Be(1);
     }
 
-    [Fact(Skip="ToDo")]
+    [Fact]
     internal static void AcceptanceTest()
     {
-        var expected = 42;
+        var expected = 2024;
         Input.ExampleInput
             .Part1Answer()
             .Should().Be(expected);
     }
 
-    [Fact(Skip = "ToDo")]
+    [Fact]
     internal static void RegressionTest()
     {
-        var expected = 42;
+        var expected = 55114892239566L;
         Input.RawInput
             .Part1Answer()
             .Should().Be(expected);
