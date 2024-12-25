@@ -4,7 +4,7 @@ namespace day24;
 
 
 internal record Thing(string Name, Func<Machine, long> Operation);
-internal record Machine(Dictionary<string, Func<Machine, long>> Operations);
+internal record Machine(Dictionary<string, Func<Machine, long>> Operations, Dictionary<string,string> Swaps);
 
 public static class D24P1
 {
@@ -16,7 +16,7 @@ public static class D24P1
         return allZ;
     }
 
-    private static long GetCombinedValue(this Machine machine, string letter)
+    internal static long GetCombinedValue(this Machine machine, string letter)
     {
         long allZ = 0;
         int bitNo = 0;
@@ -38,7 +38,7 @@ public static class D24P1
             .NotEmptyTrimmedLines()
             .Select(TryParseAsThing)
             .OfType<Thing>()
-            .ToDictionary(t => t.Name, t=> t.Operation ));
+            .ToDictionary(t => t.Name, t=> t.Operation ), []);
 
     internal static Thing? TryParseAsThing(this string line)
     {
@@ -67,7 +67,8 @@ public static class D24P1
 
     internal static long GetValue(this Machine machine, string name)
     {
-        return machine.Operations[name](machine);
+        var actualPin = machine.Swaps.GetValueOrDefault(name, name);
+        return machine.Operations[actualPin](machine);
     }
 
     internal static int GetResult(this IEnumerable<Thing> things) => things.Select(AsResult).Sum();
